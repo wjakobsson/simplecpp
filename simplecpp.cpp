@@ -784,8 +784,10 @@ void simplecpp::TokenList::readfile(Stream &stream, const std::string &filename,
                         ++pos;
                     }
                 }
-                push_back(new Token(currentToken, location));
-                location.adjust(currentToken);
+                if (!currentToken.empty()) {
+                    push_back(new Token(currentToken, location));
+                    location.adjust(currentToken);
+                }
                 location.line += spliced;
                 continue;
             }
