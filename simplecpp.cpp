@@ -771,8 +771,22 @@ void simplecpp::TokenList::readfile(Stream &stream, const std::string &filename,
                     ch = stream.readChar();
                 }
                 stream.ungetChar();
+                std::string::size_type pos = 0;
+                unsigned int spliced = 0;
+                while ((pos = currentToken.find('\\', pos)) != std::string::npos) {
+                    if (pos + 1 < currentToken.size() && currentToken[pos + 1] == '\n') {
+                        currentToken.erase(pos, 2);
+                        ++spliced;
+                    } else if (pos + 2 < currentToken.size() && currentToken[pos + 1] == '\r' && currentToken[pos + 2] == '\n') {
+                        currentToken.erase(pos, 3);
+                        ++spliced;
+                    } else {
+                        ++pos;
+                    }
+                }
                 push_back(new Token(currentToken, location));
                 location.adjust(currentToken);
+                location.line += spliced;
                 continue;
             }
         }
