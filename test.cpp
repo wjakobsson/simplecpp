@@ -1436,6 +1436,30 @@ static void error6()
     ASSERT_EQUALS("file0,1,#error,#error \n", toString(outputList));
 }
 
+static void error7()
+{
+    const char code[] = "#error bla\\\nbla\n";
+    std::vector<std::string> files;
+    simplecpp::FileDataCache cache;
+    simplecpp::OutputList outputList;
+    simplecpp::TokenList tokens2(files);
+    const simplecpp::TokenList rawtokens = makeTokenList(code, sizeof(code),files,"test.c");
+    simplecpp::preprocess(tokens2, rawtokens, files, cache, simplecpp::DUI(), &outputList);
+    ASSERT_EQUALS("file0,1,#error,#error blabla\n", toString(outputList));
+}
+
+static void error8()
+{
+    const char code[] = "#error bla\\\r\nbla\n";
+    std::vector<std::string> files;
+    simplecpp::FileDataCache cache;
+    simplecpp::OutputList outputList;
+    simplecpp::TokenList tokens2(files);
+    const simplecpp::TokenList rawtokens = makeTokenList(code, sizeof(code),files,"test.c");
+    simplecpp::preprocess(tokens2, rawtokens, files, cache, simplecpp::DUI(), &outputList);
+    ASSERT_EQUALS("file0,1,#error,#error blabla\n", toString(outputList));
+}
+
 static void garbage()
 {
     simplecpp::OutputList outputList;
@@ -3947,6 +3971,8 @@ static void runTests(int argc, char **argv, Input input)
     TEST_CASE(error4);
     TEST_CASE(error5);
     TEST_CASE(error6);
+    TEST_CASE(error7);
+    TEST_CASE(error8);
 
     TEST_CASE(garbage);
     TEST_CASE(garbage_endif);
